@@ -1,0 +1,73 @@
+﻿@using Collectify.Domain.Enums;
+@model Collectify.Service.DTOs.Collections.CollectionCreationDto
+
+@{
+    ViewData["Title"] = "Create Collection";
+}
+
+<h2>Create Collection</h2>
+
+@using (Html.BeginForm("PostCreate", "Collection", FormMethod.Post))
+{
+    <div>
+        <label>Name:</label>
+        @Html.TextBoxFor(m => m.Name)
+    </div>
+    <div>
+        <label>Description:</label>
+        @Html.TextBoxFor(m => m.Description)
+    </div>
+    <div>
+        <label>Category:</label>
+        @Html.DropDownListFor(m => m.Category, Enum.GetValues(typeof(Category)).Cast<Category>().Select(c => new SelectListItem
+    {
+    Text = c.ToString(),
+    Value = ((int)c).ToString()
+    }), "Please select")
+    </div>
+
+    <h3>Fields List</h3>
+    <div id="fieldsListContainer">
+        <!-- This container will be used to add dynamically new fields via JavaScript -->
+    </div>
+
+    <input type="button" value="Add Field" onclick="addField()" />
+    <input type="submit" value="Submit" />
+}
+
+@section Scripts {
+    <script>
+        function addField() {
+            var container = document.getElementById("fieldsListContainer");
+            var index = container.children.length;
+
+            var fieldGroup = document.createElement("div");
+            fieldGroup.classList.add("field-group");
+
+            var nameLabel = document.createElement("label");
+            nameLabel.innerText = "Field Name:";
+            var nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.name = "FieldsList[" + index + "].Name";
+
+            var typeLabel = document.createElement("label");
+            typeLabel.innerText = "Field Type:";
+            var typeSelect = document.createElement("select");
+            typeSelect.name = "FieldsList[" + index + "].Type";
+
+            var optionText = ["Bool", "Date", "Integer", "MultilineString", "String"];
+            for (var i = 0; i < optionText.length; i++) {
+                var option = document.createElement("option");
+                option.value = optionText[i];
+                option.text = optionText[i];
+                typeSelect.appendChild(option);
+            }
+
+            fieldGroup.appendChild(nameLabel);
+            fieldGroup.appendChild(nameInput);
+            fieldGroup.appendChild(typeLabel);
+            fieldGroup.appendChild(typeSelect);
+            container.appendChild(fieldGroup);
+        }
+    </script>
+}

@@ -1,0 +1,43 @@
+﻿@model Collectify.Service.DTOs.Users.UserCreationDto
+
+@if (TempData.ContainsKey("SuccessMessage"))
+{
+            <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+            </div>
+}
+
+@if (TempData.ContainsKey("ErrorMessage"))
+{
+            <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+            </div>
+}
+
+<h2>Registration</h2>
+
+<form asp-controller="Account" asp-action="Register" method="post">
+    <div>
+        <label for="Name">Name:</label>
+        <input type="text" id="Name" name="Name" required />
+    </div>
+    <div>
+        <label for="Username">Username:</label>
+        <input type="text" id="Username" name="Username" required />
+    </div>
+    <div>
+        <label for="Email">Email:</label>
+        <input type="email" id="Email" name="Email" required />
+    </div>
+    <div>
+        <label for="Password">Password:</label>
+        <input type="password" id="Password" name="Password" required />
+    </div>
+    <div>
+        <button type="submit">Register</button>
+    </div>
+</form>
+
+<form asp-controller="Account" asp-action="Login" method="get">
+    <button type="submit">Login to existing account</button>
+</form>

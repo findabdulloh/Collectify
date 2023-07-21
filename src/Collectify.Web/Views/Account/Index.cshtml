@@ -1,0 +1,35 @@
+﻿@model Collectify.Service.DTOs.Users.UserResultDto
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Account Information</title>
+</head>
+<body>
+    <h1>Welcome, @Model.Name!</h1>
+    <p><strong>Username:</strong> @Model.Username</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+    <p><strong>Account Status:</strong> @(Model.Verified ? "Verified" : "Unverified"), @(Model.IsBlocked ? "Blocked" : "Unblocked")</p>
+    <img src="@Model.ProfilePhoto.Url" alt="Profile Photo">
+
+    <h2>Account Actions</h2>
+    <form asp-action="Password" asp-controller="Account" method="get">
+        <button type="submit">Change Password</button>
+    </form>
+
+    <form asp-action="Email" asp-controller="Account" method="get">
+        <button type="submit">Change Email</button>
+    </form>
+
+    <form asp-action="Update" asp-controller="Account" method="get">
+        <button type="submit">Edit profile</button>
+    </form>
+
+    @if (!Model.Verified)
+    {
+        <form asp-action="SendVerificationEmail" asp-controller="Account" method="post">
+            <button type="submit">Send Verification Email Again</button>
+        </form>
+    }
+</body>
+</html>

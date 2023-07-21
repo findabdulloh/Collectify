@@ -1,0 +1,81 @@
+﻿@using Collectify.Domain.Enums;
+@model Collectify.Web.Models.CollectionIndexViewModel
+
+@{
+    ViewData["Title"] = "Collections";
+}
+
+@if (TempData.ContainsKey("SuccessMessage"))
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData.ContainsKey("ErrorMessage"))
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<h2>Collections</h2>
+
+@foreach (var collection in Model.Collections.Data)
+{
+    <div>
+        <h3>Name: @collection.Name</h3>
+        <p>Description: @collection.Description</p>
+        <p>Category: @collection.Category</p>
+        <p>Item Count: @collection.ItemCount</p>
+        <img src="@collection.Photo.Url" alt="@collection.Name" />
+
+        @if (Model.Visitor is not null
+            && (Model.Visitor.Id == collection.UserId 
+            ||  Model.Visitor.Role == UserRole.Admin))
+        {
+            <form asp-controller="Collection" asp-action="Update" method="get">
+                <input type="hidden" name="id" value="@collection.Id" />
+                <button type="submit">Edit</button>
+            </form>
+            <form asp-controller="Collection" asp-action="Delete" method="post">
+                <input type="hidden" name="id" value="@collection.Id" />
+                <button type="submit">Delete</button>
+            </form>
+        }
+
+        <form asp-controller="Collection" asp-action="View" method="get">
+            <input type="hidden" name="id" value="@collection.Id" />
+            <button type="submit">See</button>
+        </form>
+    </div>
+}
+
+@if (Model.Visitor is not null
+        && (Model.Visitor.Id == Model.CollectionsUser.Id
+         || Model.Visitor.Role == UserRole.Admin))
+{
+    <form asp-controller="Collection" asp-action="Create" method="get" >
+        <button type="submit">Create a collection</button>
+    </form>
+}
+
+@if (Model.Collections.TotalPages > 1)
+{
+    <div class="pagination">
+        @if (Model.Collections.HasPrevious)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.Collections.CurrentPage - 1)" asp-route-collectionsUserId="@Model.CollectionsUser.Id">Previous</a>
+        }
+
+        @for (var pagee = 1; pagee <= Model.Collections.TotalPages; pagee++)
+        {
+            <a asp-action="Index" asp-route-page="@pagee" asp-route-collectionsUserId="@Model.CollectionsUser.Id"> -@pagee- </a>
+        }
+
+        @if (Model.Collections.HasNext)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.Collections.CurrentPage + 1)" asp-route-collectionsUserId="@Model.CollectionsUser.Id">Next</a>
+        }
+    </div>
+}

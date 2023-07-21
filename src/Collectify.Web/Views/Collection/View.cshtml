@@ -1,0 +1,98 @@
+﻿@using Collectify.Domain.Enums;
+@model Collectify.Web.Models.CollectionViewModel
+
+@{
+    ViewData["Title"] = "Collection Information";
+}
+
+@if (TempData.ContainsKey("SuccessMessage"))
+{
+            <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+            </div>
+}
+
+@if (TempData.ContainsKey("ErrorMessage"))
+{
+            <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+            </div>
+}
+
+<h2>Name: @Model.Collection.Name</h2>
+
+<div>
+    <p>Description: @Model.Collection.Description</p>
+    <p>Category: @Model.Collection.Category</p>
+    <p>Item Count: @Model.Collection.ItemCount</p>
+    <p>Owner: @Model.Collection.User.Name</p>
+    <p>Owner's Email: @Model.Collection.User.Email</p>
+
+    <h3>Fields:</h3>
+    <ul>
+        @foreach (var (fieldName, fieldType) in Model.Collection.Fields)
+        {
+            <li>@fieldName: @fieldType</li>
+        }
+    </ul>
+
+    <img src="@Model.Collection.Photo.Url" alt="@Model.Collection.Name" />
+</div>
+
+<h3>Items</h3>
+
+@foreach (var item in Model.Items.Data)
+{
+    <div>
+        <img src="@item.Photo.Url" alt="Item Photo">
+        <h4>@item.Name</h4>
+        <p>Likes: @item.LikeNumber</p>
+        <p>Comments: @item.CommentNumber</p>
+        @foreach (var field in item.Fields)
+        {
+            <p>@field.Name: @field.Value</p>
+            @if (Model.Visitor is not null
+              && (Model.Visitor.Id == Model.Collection.UserId
+                 || Model.Visitor.Role == UserRole.Admin))
+            {
+                <form asp-controller="Item" asp-action="UpdateField" method="get">
+                    <input type="hidden" name="id" value="@Model.Collection.Id" />
+                    <button type="submit">Edit</button>
+                </form>
+            }
+        }
+
+
+        @if (Model.Visitor is not null
+         && (Model.Visitor.Id == Model.Collection.UserId
+          || Model.Visitor.Role == UserRole.Admin))
+        {
+            <form asp-controller="Item" asp-action="Update" method="get">
+                <input type="hidden" name="id" value="@Model.Collection.Id" />
+                <button type="submit">Edit</button>
+            </form>
+            <form asp-controller="Item" asp-action="Delete" method="post">
+                <input type="hidden" name="id" value="@Model.Collection.Id" />
+                <button type="submit">Delete</button>
+            </form>
+        }
+
+        <form asp-controller="Collection" asp-action="View" method="get">
+            <input type="hidden" name="id" value="@Model.Collection.Id" />
+            <button type="submit">See</button>
+        </form>
+    </div>
+}
+
+@if (Model.Visitor is not null
+        && (Model.Visitor.Id == Model.Collection.UserId
+         || Model.Visitor.Role == UserRole.Admin))
+{
+    <form asp-controller="Item" asp-action="Create" method="get">
+        <button type="submit">Add item</button>
+    </form>
+}
+<form asp-action="Index" asp-asp-controller="Collection" method="get">
+    <input type="hidden" name="collectionsUserId" value="@Model.Collection.UserId" />
+    <button type="submit">Back</button>
+</form>

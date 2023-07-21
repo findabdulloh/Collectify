@@ -1,0 +1,58 @@
+﻿@model Collectify.Web.Models.HomeIndexViewModel
+
+<h2>Main Page</h2>
+
+<div>
+    <h3>Top 5 Largest Collections</h3>
+    @if (Model.TopCollections.Count > 0)
+    {
+        <ul>
+            @foreach (var collection in Model.TopCollections)
+            {
+                <li>
+                    <strong>@collection.Name</strong> - Items Count: @collection.ItemCount
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No collections found.</p>
+    }
+</div>
+
+<div>
+    <h3>Latest Items</h3>
+    @if (Model.LatestItems.Data.Count > 0)
+    {
+        <ul>
+            @foreach (var item in Model.LatestItems.Data)
+            {
+                <li>
+                    <strong>@item.Name</strong> - Collection: @item.Collection.Name, Author: @item.User.Name
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No items found.</p>
+    }
+</div>
+
+<div>
+    <h3>Tag Cloud</h3>
+    @if (Model.Tags.Count > 0)
+    {
+        <div class="tag-cloud">
+            @foreach (var tag in Model.Tags)
+            {
+                <a href="@Url.Action("Search", "Item", new { searchQuery = tag })" class="tag-link">@tag</a>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No tags found.</p>
+    }
+</div>
